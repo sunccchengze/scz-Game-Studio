@@ -69,8 +69,9 @@ def make_subject(work: Path, assets: Path) -> None:
             min(cut.width, bbox[2] + pad), min(cut.height, bbox[3] + pad))
     fig = cut.crop(bbox)
     # Box accounts for the in-shader 1.25x subject zoom about canvas center:
-    # pre 376..1176  ->  post ~278..1278, clear of both type zones.
-    box_w, box_h, cx, cy = 860, 800, 512, 776
+    # pre 335..1225  ->  post ~227..1339, crown breaks the top rule,
+    # feet graze the tagline zone (type stays on top, TCG style).
+    box_w, box_h, cx, cy = 940, 890, 512, 780
     s = min(box_w / fig.width, box_h / fig.height)
     fig = fig.resize((round(fig.width * s), round(fig.height * s)), Image.LANCZOS)
     canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -130,12 +131,12 @@ def make_text(root: Path, assets: Path) -> None:
     txt(72, 48, cfg.get("subtitle", ""), 26, fill=gold)
     txt(72, 86, cfg.get("title", ""), 92, max_width=880)
     txt(76, 196, cfg.get("collection", ""), 22, fill=gold)
-    line(246)
-    line(1278)
-    txt(512, 1298, cfg.get("tagline", ""), 30, anchor="ma", fill=gold)
-    txt(512, 1344, cfg.get("technique", ""), 62, anchor="ma")
-    txt(72, 1466, cfg.get("edition", ""), 21, fill=gold)
-    txt(952, 1466, "SCZ HOLO", 19, anchor="ra", fill=dim, max_width=360)
+    line(232)
+    line(1292)
+    txt(512, 1312, cfg.get("tagline", ""), 30, anchor="ma", fill=gold)
+    txt(512, 1358, cfg.get("technique", ""), 62, anchor="ma")
+    txt(72, 1480, cfg.get("edition", ""), 21, fill=gold)
+    txt(952, 1480, "SCZ HOLO", 19, anchor="ra", fill=dim, max_width=360)
     im.save(assets / "text.png")
     print("text.png", im.size)
 
