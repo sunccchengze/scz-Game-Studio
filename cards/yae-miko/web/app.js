@@ -387,8 +387,7 @@ function flip() {
 
 function setupControls() {
   for (const [id, name, label] of [
-    ['foil', 'uFoil', 'foil-value'], ['scale', 'uScale', 'scale-value'],
-    ['depth', 'uDepth', 'depth-value'], ['bg-depth', 'uBgDepth', 'bg-depth-value'],
+    ['foil', 'uFoil', 'foil-value'], ['depth', 'uDepth', 'depth-value'],
   ]) {
     const input = $(id);
     input.value = uniforms[name].value;
@@ -396,11 +395,31 @@ function setupControls() {
       uniforms[name].value = Number(input.value);
       $(label).value = id === 'foil'
         ? `${Math.round(input.value * 100)}%`
-        : Number(input.value).toFixed(2).replace('-', '−');
+        : Number(input.value).toFixed(2);
     };
     input.addEventListener('input', update);
     update();
   }
+  // 主体缩放：zoom 语义，往右 = 人更大（100% = 配置中性点，画面与之前默认一致）
+  const scaleBase = uniforms.uScale.value;
+  const scaleInput = $('scale');
+  const updateScale = () => {
+    const zoom = Number(scaleInput.value);
+    uniforms.uScale.value = scaleBase / zoom;
+    $('scale-value').value = `${Math.round(zoom * 100)}%`;
+  };
+  scaleInput.addEventListener('input', updateScale);
+  updateScale();
+  // 背景深度：往右 = 更深（滑杆取正值，写入 shader 时取负）
+  const bgInput = $('bg-depth');
+  bgInput.value = Math.abs(uniforms.uBgDepth.value);
+  const updateBg = () => {
+    const v = Number(bgInput.value);
+    uniforms.uBgDepth.value = -v;
+    $('bg-depth-value').value = v.toFixed(2);
+  };
+  bgInput.addEventListener('input', updateBg);
+  updateBg();
   stage.addEventListener('pointerdown', (e) => {
     if (e.button !== 0) return;
     dragging = true; setAuto(false);
